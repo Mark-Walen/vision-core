@@ -51,14 +51,16 @@ add_executable(${PROJECT_NAME}
         "include/vision/helpers/yaml.h"
         include/vision/helpers/array_mat.h
         src/vision/helpers/array_mat.cpp
-        src/vision/sensors/camera/camera.cpp)
+        src/vision/sensors/camera/camera.cpp
+        include/vision/sensors/camera/camera.h
+        src/vision/sensors/camera/stereo_camera.cpp
+        include/vision/sensors/camera/stereo_camera.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} Eigen3::Eigen)
 target_include_directories(${PROJECT_NAME} PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
-target_compile_definitions(${PROJECT_NAME} PRIVATE YAML_CPP_API)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
     set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
@@ -88,6 +90,8 @@ if (BUILD_TESTING)
             "include/vision/helpers/yaml.h"
             "src/vision/sensors/camera/camera.cpp"
             "include/vision/sensors/camera/camera.h"
+            src/vision/sensors/camera/stereo_camera.cpp
+            include/vision/sensors/camera/stereo_camera.h
     )
     target_link_libraries(test_sensors_camera
             ${YAML_CPP_LIBRARIES}
