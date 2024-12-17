@@ -20,12 +20,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find OpenCV
-set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv4")
+set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-mingw-dynamic/share/opencv4")
 find_package(OpenCV REQUIRED)
 
 # Include OpenCV and yaml-cpp headers
 message(STATUS "OpenCV INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
-message(STATUS "OpenCV LIBRARIES: ${OpenCV_LIBRARIES}")
+message(STATUS "OpenCV LIBRARIES: ${OpenCV_LIBS}")
 
 # Find yaml-cpp
 find_package(yaml-cpp CONFIG REQUIRED)
@@ -48,7 +48,10 @@ include_directories(${PROJECT_SOURCE_DIR}/include/
 add_executable(${PROJECT_NAME}
         "Stereo.cpp" "Stereo.h"
         "src/vision/helpers/yaml.cc"
-        "include/vision/helpers/yaml.h")
+        "include/vision/helpers/yaml.h"
+        include/vision/helpers/array_mat.h
+        src/vision/helpers/array_mat.cpp
+        src/vision/sensors/camera/camera.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} Eigen3::Eigen)
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -72,6 +75,27 @@ if (BUILD_TESTING)
             test/helper/yaml.cpp
             "src/vision/helpers/yaml.cc"
             "include/vision/helpers/yaml.h")
-    target_link_libraries(test_yaml ${YAML_CPP_LIBRARIES}  Eigen3::Eigen GTest::GTest GTest::Main)
+    target_link_libraries(test_yaml ${YAML_CPP_LIBRARIES}  GTest::GTest GTest::Main)
+    target_include_directories(test_yaml PRIVATE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
+
+    add_executable(test_sensors_camera
+            test/sensors/test_sensors_camera.cpp
+            test/helper/yaml.cpp
+            "src/vision/helpers/yaml.cc"
+            "include/vision/helpers/yaml.h"
+            "src/vision/sensors/camera/camera.cpp"
+            "include/vision/sensors/camera/camera.h"
+    )
+    target_link_libraries(test_sensors_camera
+            ${YAML_CPP_LIBRARIES}
+            ${OpenCV_LIBS}
+            GTest::GTest GTest::Main)
+    target_include_directories(test_sensors_camera PRIVATE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
 
 endif ()

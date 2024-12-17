@@ -1,7 +1,8 @@
-#include "vision/helpers/yaml.h"
-
-#include <yaml-cpp/yaml.h>
 #include <stdexcept>
+
+#include "vision/helpers/yaml.h"
+#include <yaml-cpp/yaml.h>
+#include <opencv2/core/mat.hpp>
 
 using YAMLUtils = vlue::yaml::YAMLUtils;
 
@@ -65,3 +66,83 @@ std::array<Tp, Nm> YAMLUtils::yamlNodeToArray(const YAML::Node& node, int rows, 
 
     return result;
 }
+
+template<typename Tp>
+cv::Mat_<Tp> YAMLUtils::yamlNodeToMat(const YAML::Node& node, int rows, int cols, FillType_ fill) {
+    cv::Mat_<Tp> mat(rows, cols);
+    if(node)
+        fill = FillType_::Custom;
+
+    switch (fill) {
+        case FillType_::Zeros:
+            mat = cv::Mat_<Tp>::zeros(rows, cols);
+            break;
+        case FillType_::Ones:
+            mat = cv::Mat_<Tp>::ones(rows, cols);
+            break;
+        case FillType_::Eyes:
+            mat = cv::Mat_<Tp>::eye(rows, cols);
+            break;
+        case FillType_::Custom:
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < cols; ++j) {
+                    mat(i, j) = node[i * cols + j].as<Tp>(); // Read data from YAML
+                }
+            }
+            break;
+    }
+    return mat;
+}
+
+cv::Mat YAMLUtils::yamlNodeToMat(const YAML::Node& node, int rows, int cols, int type, FillType_ fill) {
+    cv::Mat mat(rows, cols, type);
+
+    if(node)
+        fill = FillType_::Custom;
+
+    switch (fill) {
+        case FillType_::Zeros:
+            mat.setTo(cv::Scalar(0));
+            break;
+        case FillType_::Ones:
+            mat.setTo(cv::Scalar(1));
+            break;
+        case FillType_::Eyes:
+            mat = cv::Mat::eye(rows, cols, type);
+            break;
+        case FillType_::Custom:
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < cols; ++j) {
+                    // Handle matrix types dynamically
+                    switch (type) {
+                        case CV_8U:
+                            mat.at<uchar>(i, j) = node[i * cols + j].as<int>();
+                            break;
+                        case CV_8S:
+                            mat.at<schar>(i, j) = node[i * cols + j].as<schar>();
+                            break;
+                        case CV_16U:
+                            mat.at<ushort>(i, j) = node[i * cols + j].as<int>();
+                            break;
+                        case CV_16S:
+                            mat.at<short>(i, j) = node[i * cols + j].as<short>();
+                            break;
+                        case CV_32S:
+                            mat.at<int>(i, j) = node[i * cols + j].as<int>();
+                            break;
+                        case CV_32F:
+                            mat.at<float>(i, j) = node[i * cols + j].as<float>();
+                            break;
+                        case CV_64F:
+                            mat.at<double>(i, j) = node[i * cols + j].as<double>();
+                            break;
+                        default:
+                            throw std::runtime_error("Unsupported matrix type");
+                    }
+                }
+            }
+            break;
+    }
+    return mat;
+}
+

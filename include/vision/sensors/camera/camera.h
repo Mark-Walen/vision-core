@@ -5,7 +5,12 @@
 #include <array>
 #include <string>
 #include <stdexcept>
-#include <opencv2/core/mat.hpp>
+//#include <opencv2/core/mat.hpp>
+#include <opencv2/opencv.hpp>
+
+namespace YAML {
+    class Node; // Forward declaration for YAML-cpp
+}
 
 namespace vlue {
     namespace sensors {
@@ -49,22 +54,18 @@ namespace vlue {
             _map_type map_x, map_y;
 
             // Default constructor
-            // Default constructor
             explicit Camera(_height_type height = 0, _width_type width = 0,
-                            const _distortion_model_type &distortion_model = "plumb_bob",
+                            _distortion_model_type distortion_model = "plumb_bob",
                             const _d_type &d = cv::Mat::zeros(5, 1, CV_64F),
                             const _k_type &k = cv::Mat::eye(3, 3, CV_64F),
                             const _r_type &r = cv::Mat::eye(3, 3, CV_64F),
                             const _t_type &t = cv::Mat::zeros(3, 1, CV_64F),
                             const _p_type &p = cv::Mat::zeros(3, 4, CV_64F),
-                            const _roi_type &roi = cv::Rect(0, 0, 0, 0), bool new_cam_mtx = false)
-                    : height(height), width(width), distortion_model(distortion_model),
-                      d(d.empty() ? cv::Mat::zeros(5, 1, CV_64F) : d),
-                      k(k.empty() ? cv::Mat::eye(3, 3, CV_64F) : k),
-                      r(r.empty() ? cv::Mat::eye(3, 3, CV_64F) : r),
-                      t(t.empty() ? cv::Mat::zeros(3, 1, CV_64F) : t),
-                      p(p.empty() ? cv::Mat::zeros(3, 4, CV_64F) : p),
-                      roi(roi.empty() ? cv::Rect(0, 0, width, height) : roi) {}
+                            const _roi_type &roi = cv::Rect(0, 0, 0, 0));
+
+            explicit Camera(const YAML::Node &config);
+
+            explicit Camera(const std::string &yaml_path);
         };
     }
 }

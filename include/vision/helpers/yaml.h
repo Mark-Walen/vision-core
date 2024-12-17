@@ -8,6 +8,10 @@ namespace YAML {
     class Node; // Forward declaration for YAML-cpp
 }
 
+namespace cv {
+    template<typename Tp> class Mat_;
+    class Mat;
+}
 
 namespace vlue::yaml {
     class YAMLUtils {
@@ -15,13 +19,19 @@ namespace vlue::yaml {
         enum class FillType_ {
             Zeros,
             Eyes,
-            Ones
+            Ones,
+            Custom
         };
 
         static YAML::Node loadYamlConfig(const std::string &yaml_path);
 
-        template<typename Tp, size_t Nm>
+        template<typename Tp, std::size_t Nm>
         static std::array<Tp, Nm> yamlNodeToArray(const YAML::Node& node, int rows, int cols, FillType_ fill = FillType_::Zeros);
+
+        template<typename Tp>
+        static cv::Mat_<Tp> yamlNodeToMat(const YAML::Node& node, int rows, int cols, FillType_ fill = FillType_::Zeros);
+
+        static cv::Mat yamlNodeToMat(const YAML::Node& node, int rows, int cols, int type, FillType_ fill = FillType_::Zeros);
     };
 
     using ArrayFillType = YAMLUtils::FillType_;
