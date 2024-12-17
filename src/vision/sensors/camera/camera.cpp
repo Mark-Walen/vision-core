@@ -5,9 +5,10 @@
 #include "vision/helpers/yaml.h"
 #include <yaml-cpp/yaml.h>
 #include <iostream>
+#include <opencv2/calib3d.hpp>
 
 namespace vlue::sensors {
-    Camera::Camera(Camera::_height_type height, Camera::_width_type width, const Camera::_distortion_model_type distortion_model,
+    Camera::Camera(Camera::_height_type height, Camera::_width_type width, const Camera::_distortion_model_type& distortion_model,
                    const Camera::_d_type &d, const Camera::_k_type &k, const Camera::_r_type &r, const Camera::_t_type &t,
                    const Camera::_p_type &p, const Camera::_roi_type &roi)
             : height(height), width(width),
@@ -48,4 +49,23 @@ namespace vlue::sensors {
     }
 
     Camera::Camera(const std::string &yaml_path) : Camera(yaml::YAMLUtils::loadYamlConfig(yaml_path)) {}
+
+    void Camera::calc_optimal_new_camera_matrix(double alpha, bool update) {
+        if (update || new_k.empty())
+        {
+            // Compute the optimal new camera matrix
+            new_k = cv::getOptimalNewCameraMatrix(
+                    k, // Intrinsic matrix
+                    d, // Distortion coefficients
+                    cv::Size(static_cast<int>(this->width), static_cast<int>(this->height)),
+                    alpha,
+                    cv::Size(static_cast<int>(this->width), static_cast<int>(this->height)),
+                    &this->roi // ROI output
+            );
+        }
+    }
+
+    void Camera::init_undistort_rectify_map() {
+        cv::initUndistortRectifyMap(k, d, r, p, cv::Size(width, height), CV_32FC1, map_x, map_y);
+    }
 }
