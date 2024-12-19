@@ -1,0 +1,33 @@
+ros:
+  node_name: stereo_camera_node
+  qos: 10
+  namespace: /camera
+  remappings:
+    - from: /input
+      to: /camera/image_raw
+
+camera:
+  config: /path/to/camera/parameters
+  settings:
+    exposure: auto
+    white_balance: auto
+
+capture:
+  sources: [0, 1]
+  replay: false
+  framerate:
+    value: 30
+    fallback: 24
+  resolution:
+    width: 640
+    height: 480
+  save:
+    enable: true
+    save_path: /path/to/save/video/capture
+    format: mp4
+    codec: H264
+    max-file-size: 1024*1024 # 1 GB
+
+logging:
+  level: info
+  file: /path/to/log/file.log

@@ -35,8 +35,7 @@ message(STATUS "yaml-cpp INCLUDE_DIRS: ${YAML_CPP_INCLUDE_DIR}")
 message(STATUS "yaml-cpp LIBRARIES: ${YAML_CPP_LIBRARIES}")
 
 find_package(Eigen3 REQUIRED)
-message(STATUS "Eigen INCLUDE_DIRS: ${EIGEN3_INCLUDE_DIR}")
-message(STATUS "Eigen LIBRARIES: ${Eigen3_LIBRARIES}")
+find_package(argparse CONFIG REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include/
         ${OpenCV_INCLUDE_DIRS}
@@ -54,9 +53,12 @@ add_executable(${PROJECT_NAME}
         src/vision/sensors/camera/camera.cpp
         include/vision/sensors/camera/camera.h
         src/vision/sensors/camera/stereo_camera.cpp
-        include/vision/sensors/camera/stereo_camera.h)
+        include/vision/sensors/camera/stereo_camera.h
+        src/vision/capture/stereo_capture.cpp
+        include/vision/capture/stereo_capture.h
+        src/settings/settings.cpp include/settings/settings.h)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} Eigen3::Eigen)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} Eigen3::Eigen argparse::argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -77,7 +79,10 @@ if (BUILD_TESTING)
             test/helper/yaml.cpp
             "src/vision/helpers/yaml.cc"
             "include/vision/helpers/yaml.h")
-    target_link_libraries(test_yaml ${YAML_CPP_LIBRARIES}  GTest::GTest GTest::Main)
+    target_link_libraries(test_yaml
+            ${YAML_CPP_LIBRARIES}
+            ${OpenCV_LIBS}
+            GTest::GTest GTest::Main)
     target_include_directories(test_yaml PRIVATE
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:include>
@@ -85,7 +90,6 @@ if (BUILD_TESTING)
 
     add_executable(test_sensors_camera
             test/sensors/test_sensors_camera.cpp
-            test/helper/yaml.cpp
             "src/vision/helpers/yaml.cc"
             "include/vision/helpers/yaml.h"
             "src/vision/sensors/camera/camera.cpp"
@@ -98,6 +102,34 @@ if (BUILD_TESTING)
             ${OpenCV_LIBS}
             GTest::GTest GTest::Main)
     target_include_directories(test_sensors_camera PRIVATE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
+
+    add_executable(test_capture
+            test/capture/test_capture.cpp
+            src/vision/capture/stereo_capture.cpp
+            include/vision/capture/stereo_capture.h
+    )
+    target_link_libraries(test_capture
+            ${OpenCV_LIBS})
+    target_include_directories(test_capture PRIVATE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
+
+    add_executable(test_settings
+            test/test_settings.cpp
+            "src/vision/helpers/yaml.cc"
+            "include/vision/helpers/yaml.h"
+            "include/settings/settings.h"
+            src/settings/settings.cpp
+    )
+    target_link_libraries(test_settings
+            ${YAML_CPP_LIBRARIES}
+            ${OpenCV_LIBS}
+            GTest::GTest GTest::Main)
+    target_include_directories(test_settings PRIVATE
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:include>
     )
