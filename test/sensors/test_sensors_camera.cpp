@@ -6,7 +6,6 @@
 
 #include <gtest/gtest.h>
 #include <fstream>
-#include <yaml-cpp/node/impl.h>
 #include <opencv2/core.hpp>
 
 using namespace vlue::sensors;
