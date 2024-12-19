@@ -8,7 +8,7 @@
 #include <opencv2/calib3d.hpp>
 
 namespace vlue::sensors {
-    Camera::Camera(Camera::_height_type height, Camera::_width_type width, const Camera::_distortion_model_type& distortion_model,
+    Camera::Camera(const Camera::_height_type height, const Camera::_width_type width, const Camera::_distortion_model_type& distortion_model,
                    const Camera::_d_type &d, const Camera::_k_type &k, const Camera::_r_type &r, const Camera::_t_type &t,
                    const Camera::_p_type &p, const Camera::_roi_type &roi)
             : height(height), width(width),
@@ -50,7 +50,7 @@ namespace vlue::sensors {
 
     Camera::Camera(const std::string &yaml_path) : Camera(yaml::YAMLUtils::loadYamlConfig(yaml_path)) {}
 
-    void Camera::calc_optimal_new_camera_matrix(double alpha, bool update) {
+    void Camera::calc_optimal_new_camera_matrix(const double alpha, const bool update) {
         if (update || new_k.empty())
         {
             // Compute the optimal new camera matrix
