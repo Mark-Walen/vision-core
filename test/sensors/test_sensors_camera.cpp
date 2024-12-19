@@ -1,5 +1,5 @@
 //
-// Created by wangxianggui on 2024/12/16.
+// Created by Mark-Walen on 2024/12/16.
 //
 #include "vision/sensors/camera/camera.h"
 #include "vision/sensors/camera/stereo_camera.h"

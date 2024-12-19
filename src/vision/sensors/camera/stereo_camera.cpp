@@ -10,7 +10,7 @@
 using namespace vlue::sensors;
 using namespace vlue::yaml;
 
-StereoCamera::StereoCamera(Camera &left, Camera &right, const StereoCamera::_r_type &R_,
+StereoCamera::StereoCamera(const Camera &left, const Camera &right, const StereoCamera::_r_type &R_,
                            const StereoCamera::_t_type &T_, const StereoCamera::_q_type &Q_)
         : l(left), r(right), R(R_.clone()), T(T_.clone()), Q(Q_.clone()), size(static_cast<int>(left.width), static_cast<int>(left.height)) {
     // Ensure the image sizes of the left and right cameras match

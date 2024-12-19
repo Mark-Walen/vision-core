@@ -21,7 +21,7 @@ namespace vlue::sensors {
         cv::Size size;
 
     public:
-        StereoCamera(Camera &left, Camera &right,
+        StereoCamera(const Camera &left, const Camera &right,
                      const _r_type &R_ = cv::Mat::eye(3, 3, CV_64F),
                      const _t_type &T_ = cv::Mat::zeros(3, 1, CV_64F),
                      const _q_type &Q_ = cv::Mat::eye(4, 4, CV_64F));
