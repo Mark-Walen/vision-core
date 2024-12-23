@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "vision/helpers/yaml.h"
+#include "helpers/yaml.h"
 #include <yaml-cpp/yaml.h>
 #include <opencv2/core/mat.hpp>
 

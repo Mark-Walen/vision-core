@@ -5,7 +5,7 @@
 #include <array>
 
 namespace YAML {
-    class Node; // Forward declaration for YAML-cpp
+    class Node;
 }
 
 namespace cv {
