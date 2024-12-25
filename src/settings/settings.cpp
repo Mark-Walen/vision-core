@@ -1,14 +1,14 @@
 //
-// Created by wangxianggui on 2024/12/19.
+// Created by Mark-Walen on 2024/12/19.
 //
 
 #include "settings/settings.h"
+#include "vision/helpers/yaml.h"
 
 #include <iostream>
-#include <yaml-cpp/yaml.h>
 
 namespace vlue::settings {
-    static std::string indent(int layer) {
+    static auto indent(int layer) {
         return std::string(layer * 2, ' ');
     }
 
@@ -16,15 +16,18 @@ namespace vlue::settings {
         if (!config) {
             return;
         }
+        YAML::Node m_Remappings = config["remappings"];
         node_name = config["node_name"].as<std::string>("default");
         qos = config["qos"].as<int>(10);
         namespace_name = config["namespace_name"].as<std::string>("");
-        if (config["remappings"] && config["remappings"].IsSequence()) {
-            for (const auto &remap: config["remappings"]) {
-                remappings.emplace_back(Remapping{
-                    remap["from"].as<std::string>(),
-                    remap["to"].as<std::string>()
-                });
+        if (m_Remappings && m_Remappings.IsSequence()) {
+            for (const auto m_Remapping: m_Remappings) {
+                if (m_Remapping.IsMap()) {
+                    remappings.emplace_back(Remapping{
+                        m_Remapping["from"].as<std::string>(),
+                        m_Remapping["to"].as<std::string>()
+                    });
+                }
             }
         }
     }
@@ -43,7 +46,7 @@ namespace vlue::settings {
     }
 
     void CameraConfig::parseYAMLNode(const YAML::Node &config) {
-        config_path = config["config"].as<std::string>();
+        config_path = config["config"].as<std::string>("");
 
         YAML::Node settings_ = config["settings"];
         if (settings_)
@@ -56,8 +59,8 @@ namespace vlue::settings {
         os << indent(layer) << "CameraConfig:\n"
                 << indent(layer + 1) << "config_path: " << config_path << "\n"
                 << indent(layer + 1) << "settings:\n"
-                << indent(layer + 1) << "exposure: " << settings.exposure << "\n"
-                << indent(layer + 1) << "white_balance: " << settings.white_balance << "\n";
+                << indent(layer + 2) << "exposure: " << settings.exposure << "\n"
+                << indent(layer + 2) << "white_balance: " << settings.white_balance << "\n";
         return os;
     }
 
@@ -70,14 +73,16 @@ namespace vlue::settings {
         YAML::Node resolution_ = config["resolution"];
         YAML::Node save_ = config["save"];
         if (sources_) {
-            for (const auto &source: sources_) {
+            for (size_t idx = 0; idx < sources.size(); ++idx) {
+                YAML::Node source = sources_[idx];
                 try {
                     sources.emplace_back(source.as<int>());
                 } catch (...) {
                     sources.emplace_back(source.as<std::string>());
                 }
             }
-        } else {
+        }
+        if (sources.empty()) {
             sources.emplace_back(0);
         }
         replay = config["replay"].as<bool>(false);
@@ -87,7 +92,7 @@ namespace vlue::settings {
         }
         if (save_) {
             save.enable = save_["enable"].as<bool>(false);
-            save.save_path = save_["save_path"].as<std::string>();
+            save.save_path = save_["save_path"].as<std::string>("");
             save.format = save_["format"].as<std::string>("mp4");
             save.codec = save_["codec"].as<std::string>("H264");
             save.max_file_size = save_["max_file_size"].as<uint64_t>(1024 * 1024);
@@ -141,7 +146,7 @@ namespace vlue::settings {
         logging_ = std::make_shared<LoggingConfig>();
     }
 
-    AppConfig::AppConfig(const std::string &app_config) : AppConfig(yaml::YAMLUtils::loadYamlConfig(app_config)) {
+    AppConfig::AppConfig(const std::string &app_config) : AppConfig(utils::YAMLUtils::loadYamlConfig(app_config)) {
     }
 
     void AppConfig::parseYAMLNode(const YAML::Node &config) {

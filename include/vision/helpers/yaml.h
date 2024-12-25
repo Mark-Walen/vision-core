@@ -4,16 +4,18 @@
 #include <string>
 #include <array>
 
-namespace YAML {
-    class Node;
-}
+#include <yaml-cpp/yaml.h>
 
 namespace cv {
     template<typename Tp> class Mat_;
     class Mat;
 }
 
-namespace vlue::yaml {
+namespace YAML {
+    class Node;
+}
+
+namespace vlue::utils {
     class YAMLUtils {
     public:
         enum class FillType_ {

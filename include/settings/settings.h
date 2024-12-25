@@ -11,7 +11,9 @@
 #include <variant>
 #include <vector>
 
-#include "vision/helpers/yaml.h"
+namespace YAML {
+    class Node;
+}
 
 namespace vlue::settings {
     struct Config {
@@ -22,7 +24,7 @@ namespace vlue::settings {
 
         explicit Config([[maybe_unused]] const YAML::Node &config) {}
 
-        virtual std::ostream &serialize(std::ostream &os, int layer=0) const = 0;
+        virtual std::ostream &serialize(std::ostream &os, int layer) const = 0;
 
     public:
         template<typename Tp>
@@ -49,7 +51,7 @@ namespace vlue::settings {
         explicit ROSConfig(const YAML::Node &config) : Config(config) {
             parseYAMLNode(config);
         }
-        std::ostream &serialize(std::ostream &os, int layer=0) const override;
+        std::ostream &serialize(std::ostream &os, int layer) const override;
 
     protected:
         void parseYAMLNode(const YAML::Node &config) override;
@@ -69,7 +71,7 @@ namespace vlue::settings {
             parseYAMLNode(config);
         }
 
-        std::ostream &serialize(std::ostream &os, int layer=0) const override;
+        std::ostream &serialize(std::ostream &os, int layer) const override;
 
     protected:
         void parseYAMLNode(const YAML::Node &config) override;
@@ -103,7 +105,7 @@ namespace vlue::settings {
             parseYAMLNode(config);
         }
 
-        std::ostream &serialize(std::ostream &os, int layer=0) const override;
+        std::ostream &serialize(std::ostream &os, int layer) const override;
 
     protected:
         void parseYAMLNode(const YAML::Node &config) override;
@@ -119,7 +121,7 @@ namespace vlue::settings {
             parseYAMLNode(config);
         }
 
-        std::ostream &serialize(std::ostream &os, int layer=0) const override;
+        std::ostream &serialize(std::ostream &os, int layer) const override;
 
     protected:
         void parseYAMLNode(const YAML::Node &config) override;
@@ -132,12 +134,12 @@ namespace vlue::settings {
         explicit AppConfig(const YAML::Node &config) : Config(config) {
             parseYAMLNode(config);
         }
-        std::ostream &serialize(std::ostream &os, int layer=0) const override;
+        std::ostream &serialize(std::ostream &os, int layer) const override;
 
-        ROSConfig &getROSConfig() const { return *ros_;}
-        CameraConfig &getCameraConfig() const { return *camera_;}
-        CaptureConfig &getCaptureConfig() const { return *capture_;}
-        LoggingConfig &getLoggingConfig() const { return *logging_;}
+        [[nodiscard]] ROSConfig &getROSConfig() const { return *ros_;}
+        [[nodiscard]] CameraConfig &getCameraConfig() const { return *camera_;}
+        [[nodiscard]] CaptureConfig &getCaptureConfig() const { return *capture_;}
+        [[nodiscard]] LoggingConfig &getLoggingConfig() const { return *logging_;}
 
     protected:
         void parseYAMLNode(const YAML::Node &config) override;
@@ -151,7 +153,7 @@ namespace vlue::settings {
 
     // Overload << operator for Config
     inline std::ostream &operator<<(std::ostream &os, const Config &config) {
-        return config.serialize(os);
+        return config.serialize(os, 0);
     }
 } // namespace vlue::settings
 

@@ -1,15 +1,14 @@
 //
 // Created by Mark on 2024/12/14.
 //
-#include "helpers/yaml.h"
+#include "vision/helpers/yaml.h"
 
 #include <gtest/gtest.h>
 #include <fstream>
-#include <yaml-cpp/yaml.h>
 
-using namespace vlue::yaml;
+using namespace vlue::utils;
 
-class YAMLUtilsTest : public ::testing::Test {
+class YAMLUtilsTest : public testing::Test {
 protected:
     static std::string create_test_config() {
         // Create a temporary YAML configuration file for testing

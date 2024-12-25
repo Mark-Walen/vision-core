@@ -5,6 +5,7 @@
 #include "vision/capture/stereo_capture.h"
 
 #include <iostream>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/videoio.hpp>
 
 namespace vlue::capture {

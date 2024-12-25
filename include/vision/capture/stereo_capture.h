@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <string>
-#include <opencv2/core/mat.hpp>
 
 namespace cv {
     class VideoCapture;
@@ -54,6 +53,16 @@ namespace vlue::capture {
         std::shared_ptr<cv::VideoCapture> cap_right_;
         void cap_init_(const std::shared_ptr<cv::VideoCapture> &cap, int source, int width, int height, int frameWidthScale=1);
         void cap_init_(const std::shared_ptr<cv::VideoCapture> &cap, const std::string &source, int width, int height, int frameWidthScale=1);
+
+    public:
+        using RawPtr =
+            StereoCapture *;
+        using ConstRawPtr =
+            const StereoCapture *;
+        using SharedPtr =
+            std::shared_ptr<StereoCapture>;
+        using ConstSharedPtr =
+            std::shared_ptr<StereoCapture const>;
     };
     using CaptureFrameState = StereoCapture::CaptureFrameState_;
 }

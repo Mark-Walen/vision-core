@@ -2,9 +2,7 @@
 #define VISION_SENSORS_CAMERA_CAMERA_H_
 
 #include <cstdint>
-#include <array>
 #include <string>
-#include <stdexcept>
 #include <opencv2/core/mat.hpp>
 
 namespace YAML {
@@ -28,24 +26,19 @@ namespace vlue::sensors {
         using _d_type = cv::Mat;
         _d_type d = cv::Mat::zeros(5, 1, CV_64F); // 5x1 matrix for distortion coefficients
 
-        // Replace std::array<double, 9> with cv::Mat
         using _k_type = cv::Mat;
         _k_type k = cv::Mat::eye(3, 3, CV_64F);     // 3x3 identity matrix for intrinsic parameters
         _k_type new_k = cv::Mat::eye(3, 3, CV_64F); // New camera matrix
 
-        // Replace std::array<double, 9> with cv::Mat
         using _r_type = cv::Mat;
         _r_type r = cv::Mat::eye(3, 3, CV_64F); // 3x3 identity matrix for rectification
 
-        // Replace std::array<double, 3> with cv::Mat
         using _t_type = cv::Mat;
         _t_type t = cv::Mat::zeros(3, 1, CV_64F); // 3x1 matrix for translation
 
-        // Replace std::array<double, 12> with cv::Mat
         using _p_type = cv::Mat;
         _p_type p = cv::Mat::zeros(3, 4, CV_64F); // 3x4 matrix for projection
 
-        // Keep ROI as std::array<uint32_t, 4>
         using _roi_type = cv::Rect;
         _roi_type roi = cv::Rect(0, 0, 0, 0);
 
@@ -70,6 +63,16 @@ namespace vlue::sensors {
         void calc_optimal_new_camera_matrix(double alpha = 0.0f, bool update = false);
 
         void init_undistort_rectify_map();
+
+    public:
+        using RawPtr =
+            Camera *;
+        using ConstRawPtr =
+            const Camera *;
+        using SharedPtr =
+            std::shared_ptr<Camera>;
+        using ConstSharedPtr =
+            std::shared_ptr<Camera const>;
     };
 }
 

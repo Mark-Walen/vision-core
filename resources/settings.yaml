@@ -7,23 +7,22 @@ ros:
       to: /camera/image_raw
 
 camera:
-  config: /path/to/camera/parameters
+  config: ./resources/config/stereo_v3.m.yaml
   settings:
     exposure: auto
     white_balance: auto
 
 capture:
-  sources: [0, 1]
+  sources: [0]
   replay: false
   framerate:
     value: 30
-    fallback: 24
+    fallback: 15
   resolution:
     width: 640
     height: 480
   save:
     enable: true
-    save_path: /path/to/save/video/capture
     format: mp4
     codec: H264
     max-file-size: 1024*1024 # 1 GB

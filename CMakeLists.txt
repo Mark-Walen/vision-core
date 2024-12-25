@@ -44,19 +44,19 @@ include_directories(${PROJECT_SOURCE_DIR}/include/
 )
 
 # 将源代码添加到此项目的可执行文件。
-add_executable(${PROJECT_NAME}
-        "Stereo.cpp" "Stereo.h"
+add_library(${PROJECT_NAME}
         "src/vision/helpers/yaml.cc"
         "include/vision/helpers/yaml.h"
-        include/vision/helpers/array_mat.h
-        src/vision/helpers/array_mat.cpp
+        include/vision/helpers/cv_mat.h
         src/vision/sensors/camera/camera.cpp
         include/vision/sensors/camera/camera.h
         src/vision/sensors/camera/stereo_camera.cpp
         include/vision/sensors/camera/stereo_camera.h
         src/vision/capture/stereo_capture.cpp
         include/vision/capture/stereo_capture.h
-        src/settings/settings.cpp include/settings/settings.h)
+        src/settings/settings.cpp include/settings/settings.h
+        include/vision/exceptions/exceptions.h
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} Eigen3::Eigen argparse::argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -76,12 +76,9 @@ if (BUILD_TESTING)
     message(STATUS "GTest Directory: ${GTest_DIR}")
     # TODO: 如有需要，请添加测试并安装目标。
     add_executable(test_yaml
-            test/helper/yaml.cpp
-            "src/vision/helpers/yaml.cc"
-            "include/vision/helpers/yaml.h")
+            test/helper/yaml.cpp)
     target_link_libraries(test_yaml
-            ${YAML_CPP_LIBRARIES}
-            ${OpenCV_LIBS}
+            ${PROJECT_NAME}
             GTest::GTest GTest::Main)
     target_include_directories(test_yaml PRIVATE
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -90,16 +87,9 @@ if (BUILD_TESTING)
 
     add_executable(test_sensors_camera
             test/sensors/test_sensors_camera.cpp
-            "src/vision/helpers/yaml.cc"
-            "include/vision/helpers/yaml.h"
-            "src/vision/sensors/camera/camera.cpp"
-            "include/vision/sensors/camera/camera.h"
-            src/vision/sensors/camera/stereo_camera.cpp
-            include/vision/sensors/camera/stereo_camera.h
     )
     target_link_libraries(test_sensors_camera
-            ${YAML_CPP_LIBRARIES}
-            ${OpenCV_LIBS}
+            ${PROJECT_NAME}
             GTest::GTest GTest::Main)
     target_include_directories(test_sensors_camera PRIVATE
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -108,11 +98,9 @@ if (BUILD_TESTING)
 
     add_executable(test_capture
             test/capture/test_capture.cpp
-            src/vision/capture/stereo_capture.cpp
-            include/vision/capture/stereo_capture.h
     )
     target_link_libraries(test_capture
-            ${OpenCV_LIBS})
+            ${PROJECT_NAME})
     target_include_directories(test_capture PRIVATE
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:include>
@@ -120,14 +108,9 @@ if (BUILD_TESTING)
 
     add_executable(test_settings
             test/test_settings.cpp
-            "src/vision/helpers/yaml.cc"
-            "include/vision/helpers/yaml.h"
-            "include/settings/settings.h"
-            src/settings/settings.cpp
     )
     target_link_libraries(test_settings
-            ${YAML_CPP_LIBRARIES}
-            ${OpenCV_LIBS}
+            ${PROJECT_NAME}
             GTest::GTest GTest::Main)
     target_include_directories(test_settings PRIVATE
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

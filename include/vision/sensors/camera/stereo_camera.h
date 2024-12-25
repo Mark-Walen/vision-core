@@ -1,5 +1,5 @@
 //
-// Created by wangxianggui on 2024/12/17.
+// Created by Mark-Walen on 2024/12/17.
 //
 
 #ifndef STEREO_VISION_STEREO_CAMERA_H
@@ -36,6 +36,16 @@ namespace vlue::sensors {
         void stereo_rectify(double alpha = 0.0f);
 
         void init_stereo_undistort_rectify_map();
+
+    public:
+        using RawPtr =
+            StereoCamera *;
+        using ConstRawPtr =
+            const StereoCamera *;
+        using SharedPtr =
+            std::shared_ptr<StereoCamera>;
+        using ConstSharedPtr =
+            std::shared_ptr<StereoCamera const>;
     };
 }
 
