@@ -56,6 +56,10 @@ add_library(${PROJECT_NAME}
         include/vision/capture/stereo_capture.h
         src/settings/settings.cpp include/settings/settings.h
         include/vision/exceptions/exceptions.h
+        src/vision/disparity/sgbm.cpp
+        include/vision/disparity/sgbm.h
+        include/vision/pipeline/pipeline.h
+        src/vision/pipeline/pipeline.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ${YAML_CPP_LIBRARIES} Eigen3::Eigen argparse::argparse)
